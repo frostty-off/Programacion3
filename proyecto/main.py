@@ -8,7 +8,7 @@ enemigos=db.cargar_enemigos(cantidad=2)
 
 while True:
 
-    juego = int(input("Deseas Jugar? (s/n)")).lower()
+    juego = str(input("Deseas Jugar? (s/n)")).lower()
     
     if juego == "n":
         print("Gracias por jugar o/")
@@ -35,6 +35,12 @@ while True:
         for p in personajes_cargados:
 
             p.atributos()
+            print("=" * 40)
+
+        enemigos = db.cargar_enemigos(cantidad=2)
+
+        for e in enemigos:
+            e.atributos()
             print("=" * 40)
 
         db.cerrar()
