@@ -5,24 +5,35 @@ from Habilidades import Habilidades
 from database import database
 
 db = database()
-fireball = Habilidades("Bola de fuego", "Magico", 15, 1.5)
-slash = Habilidades("Corte Feroz", "Fisico", 10, 2.0)
+while True:
 
-mago = Magician("Gandalf", "Mago", "Humano", 15, 10, 80, 100, 50, 2.0)
-mago.habilidades.append(fireball)
+    juego = int(input("Deseas Jugar? (s/n)")).lower()
+    
+    if juego == "n":
+        print("Gracias por jugar o/")
+        break
 
-guerrero = Warrior("Aragorn", "Guerrero", "Humano", 40, 25, 20, 120, 80, 1.2)
-guerrero.habilidades.append(slash)
+    elif juego == "s":
 
-db.guardar_personaje(mago)
-db.guardar_personaje(guerrero)
+    
+        fireball = Habilidades("Bola de fuego", "Magico", 15, 1.5)
+        slash = Habilidades("Corte Feroz", "Fisico", 10, 2.0)
 
-print("\n--- CARGANDO DESDE LA BASE DE DATOS ---")
-personajes_cargados = db.cargar_personajes()
+        mago = Magician("Gandalf", "Mago", "Humano", 15, 10, 80, 100, 50, 2.0)
+        mago.habilidades.append(fireball)
 
-for p in personajes_cargados:
+        guerrero = Warrior("Aragorn", "Guerrero", "Humano", 40, 25, 20, 120, 80, 1.2)
+        guerrero.habilidades.append(slash)
 
-    p.atributos()
-    print("=" * 40)
+        db.guardar_personaje(mago)
+        db.guardar_personaje(guerrero)
 
-db.cerrar()
+        print("\n--- CARGANDO DESDE LA BASE DE DATOS ---")
+        personajes_cargados = db.cargar_personajes()
+
+        for p in personajes_cargados:
+
+            p.atributos()
+            print("=" * 40)
+
+        db.cerrar()
