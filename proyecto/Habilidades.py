@@ -36,8 +36,3 @@ class Habilidades:
             print(f"{caster.nombre} ha usado {self.nombre} y ha realizado {dano_final} puntos de daño a {enemigo.nombre}")
         else:
             enemigo.morir()
-
-fireball = Habilidades("Bola de fuego", "Magico", 15, 20)
-lightning = Habilidades("Rayo", "Magico", 20, 30)
-meteor = Habilidades("Meteorito", "Magico", 60, 75)
-void = Habilidades("Vacio", "Magico", 35, 45)

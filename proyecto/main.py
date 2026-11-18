@@ -1,10 +1,11 @@
 from random import random
-
-from Personaje import Magician, Warrior
+from Personaje import *
 from Habilidades import Habilidades
 from database import database
 
 db = database()
+enemigos=db.cargar_enemigos(cantidad=2)
+
 while True:
 
     juego = int(input("Deseas Jugar? (s/n)")).lower()
