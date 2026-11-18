@@ -1,3 +1,5 @@
+from Habilidades import Habilidades
+
 class Personaje:
     def __init__(self, nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina):
         self.nombre = nombre
@@ -47,6 +49,8 @@ class Warrior(Personaje):
     def __init__(self, nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, gaunlets):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.gaunlets = gaunlets
+        #EJEMPLO!!!!
+        self.habilidades.append(Habilidades("Corte", "Fisico", 10, 2.0))
         
     def atributos(self):
         super().atributos()
