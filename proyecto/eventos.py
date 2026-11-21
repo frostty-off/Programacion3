@@ -10,6 +10,11 @@ class Evento:
         self.frec = random.randint(1, 6)
         return self.frec
 
+    def _personajes_como_lista(self, personajes):
+        if isinstance(personajes, Personaje):
+            return [personajes]
+        return list(personajes)
+
 #Generamos los eventos buenos
 
 class Bueno_Evento(Evento):
@@ -17,17 +22,34 @@ class Bueno_Evento(Evento):
     def __init__(self, nombre, id):
         super().__init__(nombre, id)
 
-    def regeneracion(self):
+    def regeneracion(self, personajes):
         if self.generar_evento() == 1:
             self.sanacion = 0.45
-            pass
-        else: return
+            self.estamina = 100
+            for personaje in self._personajes_como_lista(personajes):
+                personaje.vida += round(personaje.vida * self.sanacion)
+                personaje.estamina = self.estamina
+            return True
+        return False
 
-    def multiplicador(self):
+    def multiplicador(self, personajes):
         if self.generar_evento() == 2:
-            self.multiplicador = 0.15
-            pass
-        else: return
+            factor = 0.15
+            atributos_dano = ("gaunlets", "wand", "shield", "knive", "sword")
+            for personaje in self._personajes_como_lista(personajes):
+                for habilidad in personaje.habilidades:
+                    habilidad.dmg_base *= 1 + factor
+                atributo = next(
+                    (nombre for nombre in atributos_dano if hasattr(personaje, nombre)),
+                    "fuerza"
+                )
+                setattr(
+                    personaje,
+                    atributo,
+                    getattr(personaje, atributo) * (1 + factor)
+                )
+            return True
+        return False
 
 #Generamos los eventos neutrales(combate) y si son de 3 o 6 enemigos
 
@@ -38,7 +60,7 @@ class Combate_Trigger(Evento):
 
     def combate_3(self):
         if self.generar_evento() == 3:
-            self.cantidad_enemigos = 6
+            self.cantidad_enemigos = 3
             pass
         else: return
 
