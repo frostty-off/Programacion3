@@ -1,7 +1,5 @@
-import math
 from combate import Combate
 from Personaje import *
-from Habilidades import Habilidades
 from database import database
 from eventos import Bueno_Evento
 
@@ -59,30 +57,6 @@ def leer_texto(mensaje):
         print("El valor no puede quedar vacio.")
 
 
-def leer_entero(mensaje, minimo=0):
-    while True:
-        try:
-            valor = int(input(mensaje).strip())
-        except ValueError:
-            print("Ingresa un numero entero valido.")
-            continue
-        if valor >= minimo:
-            return valor
-        print(f"El valor debe ser como minimo {minimo}.")
-
-
-def leer_decimal(mensaje, minimo):
-    while True:
-        try:
-            valor = float(input(mensaje).strip())
-        except ValueError:
-            print("Ingresa un numero valido.")
-            continue
-        if math.isfinite(valor) and valor >= minimo:
-            return valor
-        print(f"El valor debe ser como minimo {minimo}.")
-
-
 def crear_personaje(numero, nombres_existentes):
     print(f"\n--- Crear personaje {numero} de 4 ---")
     while True:
@@ -94,79 +68,29 @@ def crear_personaje(numero, nombres_existentes):
     profesion = leer_texto("Profesion: ")
     raza = leer_texto("Raza: ")
     clases = {
-        "1": ("Warrior", "Guerrero"),
-        "2": ("Magician", "Mago"),
-        "3": ("Paladin", "Paladin"),
-        "4": ("Rogue", "Picaro"),
-        "5": ("Knight", "Caballero")
+        "1": ("Guerrero", Warrior, (40, 25, 20, 120, 80, 1.2)),
+        "2": ("Mago", Magician, (15, 10, 80, 100, 50, 2.0)),
+        "3": ("Paladin", Paladin, (15, 10, 80, 100, 50, 2.0)),
+        "4": ("Picaro", Rogue, (55, 15, 30, 90, 100, 1.5)),
+        "5": ("Caballero", Knight, (40, 25, 20, 120, 80, 1.2))
     }
-    for opcion, (_, nombre_clase) in clases.items():
+    for opcion, (nombre_clase, _, _) in clases.items():
         print(f"{opcion}. {nombre_clase}")
     while True:
         opcion = input("Clase: ").strip()
         if opcion in clases:
-            tipo_clase = clases[opcion][0]
+            _, clase_personaje, atributos = clases[opcion]
             break
         print("Seleccion de clase invalida.")
 
-    fuerza = leer_entero("Fuerza: ")
-    defensa = leer_entero("Defensa: ")
-    inteligencia = leer_entero("Inteligencia: ")
-    vida = leer_entero("Vida inicial: ", minimo=1)
-    estamina = leer_entero("Estamina: ")
-    equipo = leer_decimal("Valor del equipo (multiplicador, mayor que 0): ", 0.01)
-
-    clases_personaje = {
-        "Warrior": Warrior,
-        "Magician": Magician,
-        "Paladin": Paladin,
-        "Rogue": Rogue,
-        "Knight": Knight
-    }
-    personaje = clases_personaje[tipo_clase](
-        nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, equipo
-    )
-
-    while True:
-        agregar_habilidad = input("Agregar una habilidad? (s/n): ").strip().lower()
-        if agregar_habilidad in ("s", "n"):
-            break
-        print("Responde s o n.")
-    if agregar_habilidad == "s":
-        nombre_habilidad = leer_texto("Nombre de la habilidad: ")
-        print("1. Fisico")
-        print("2. Magico")
-        while True:
-            tipo_habilidad = input("Tipo: ").strip()
-            if tipo_habilidad == "1":
-                tipo_habilidad = "Fisico"
-                break
-            if tipo_habilidad == "2":
-                tipo_habilidad = "Magico"
-                break
-            print("Seleccion de tipo invalida.")
-        coste = leer_entero("Coste de estamina: ")
-        dano_base = leer_decimal("Daño base: ", 0.01)
-        personaje.habilidades.append(
-            Habilidades(nombre_habilidad, tipo_habilidad, coste, dano_base)
-        )
-    return personaje
+    return clase_personaje(nombre, profesion, raza, *atributos)
 
 
 def personajes_predeterminados():
-    fireball = Habilidades("Bola de fuego", "Magico", 15, 1.5)
-    slash = Habilidades("Corte Feroz", "Fisico", 10, 2.0)
-    void = Habilidades("el void", "Magico", 30, 1.5)
-    canonball = Habilidades("Cañon de bola", "Fisico", 10, 2.0)
-
     mago = Magician("Gandalf", "Mago", "Humano", 15, 10, 80, 100, 50, 2.0)
-    mago.habilidades.append(fireball)
     guerrero = Warrior("Aragorn", "Guerrero", "Humano", 40, 25, 20, 120, 80, 1.2)
-    guerrero.habilidades.append(slash)
     paladin = Paladin("Juan", "Paladin", "Humano", 15, 10, 80, 100, 50, 2.0)
-    paladin.habilidades.append(void)
     caballero = Knight("Luis", "Caballero", "Humano", 40, 25, 20, 120, 80, 1.2)
-    caballero.habilidades.append(canonball)
     return [mago, guerrero, paladin, caballero]
 
 
@@ -257,7 +181,6 @@ def main():
             victorias = 0
             while victorias < 6:
                 if not any(personaje.estavivo() for personaje in personajes_cargados):
-                    print(f"No quedan personajes vivos. Victorias: {victorias}/6.")
                     break
 
                 print(f"\nVictorias necesarias: {victorias}/6")
@@ -269,18 +192,14 @@ def main():
                 for personaje in personajes_cargados:
                     db.guardar_personaje(personaje)
 
-                grupo_combate = elegir_grupo(personajes_cargados)
-                salud_estamina_inicial = {
-                    personaje: (personaje.vida, personaje.estamina)
-                    for personaje in grupo_combate
-                }
-                combate = Combate.aleatorio(grupo_combate, db)
-                print(f"Te enfrentas a {len(combate.enemigos)} enemigos.")
-                for enemigo in combate.enemigos:
-                    enemigo.atributos()
-                    print("=" * 40)
+                while True:
+                    grupo_combate = elegir_grupo(personajes_cargados)
+                    combate = Combate.aleatorio(grupo_combate, db)
+                    print(f"Te enfrentas a {len(combate.enemigos)} enemigos.")
+                    for enemigo in combate.enemigos:
+                        enemigo.atributos()
+                        print("=" * 40)
 
-                while combate.estado != "victoria":
                     while combate.estado == "en_curso":
                         for personaje in grupo_combate:
                             if personaje.estavivo():
@@ -290,19 +209,21 @@ def main():
                         if combate.estado == "en_curso":
                             combate.turno_enemigos()
 
-                    if combate.estado == "derrota":
-                        print(
-                            "El grupo cayo. Se restaura su vida y estamina; "
-                            "se reintenta la misma ronda contra los mismos enemigos."
-                        )
-                        combate.reintentar(salud_estamina_inicial)
+                    if combate.estado == "victoria":
+                        victorias += 1
+                        print(f"Ronda ganada. Victorias: {victorias}/6.")
                         for personaje in personajes_cargados:
                             db.guardar_personaje(personaje)
+                        break
 
-                victorias += 1
-                print(f"Ronda ganada. Victorias: {victorias}/6.")
-                for personaje in personajes_cargados:
-                    db.guardar_personaje(personaje)
+                    for personaje in personajes_cargados:
+                        db.guardar_personaje(personaje)
+
+                    if not any(personaje.estavivo() for personaje in personajes_cargados):
+                        print(f"No quedan personajes vivos. Victorias: {victorias}/6.")
+                        break
+
+                    print("El grupo cayo. Elige otro grupo para intentar esta ronda.")
 
             if victorias == 6:
                 print("Felicidades, ganaste seis combates y terminaste el juego.")
