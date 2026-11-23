@@ -1,3 +1,5 @@
+import random
+
 from combate import Combate
 from Personaje import *
 from database import database
@@ -15,6 +17,20 @@ def elegir_objetivo(enemigos):
             indice = int(seleccion)
             if 1 <= indice <= len(enemigos_vivos):
                 return enemigos_vivos[indice - 1]
+        print("Seleccion invalida.")
+
+
+def elegir_personaje(personajes):
+    personajes_vivos = [personaje for personaje in personajes if personaje.estavivo()]
+    for indice, personaje in enumerate(personajes_vivos, start=1):
+        print(f"{indice}. {personaje.nombre} (vida: {personaje.vida})")
+
+    while True:
+        seleccion = input("Elige el personaje que atacara: ").strip()
+        if seleccion.isdigit():
+            indice = int(seleccion)
+            if 1 <= indice <= len(personajes_vivos):
+                return personajes_vivos[indice - 1]
         print("Seleccion invalida.")
 
 
@@ -179,6 +195,7 @@ def main():
             print("\n--- CARGANDO PERSONAJES ---")
 
             victorias = 0
+            cantidad_enemigos = random.choice((3, 6))
             while victorias < 6:
                 if not any(personaje.estavivo() for personaje in personajes_cargados):
                     break
@@ -192,22 +209,21 @@ def main():
                 for personaje in personajes_cargados:
                     db.guardar_personaje(personaje)
 
+                enemigos_ronda = db.cargar_enemigos(cantidad=cantidad_enemigos)
+                print(f"Te enfrentas a {len(enemigos_ronda)} enemigos.")
+                for enemigo in enemigos_ronda:
+                    enemigo.atributos()
+                    print("=" * 40)
+
                 while True:
                     grupo_combate = elegir_grupo(personajes_cargados)
-                    combate = Combate.aleatorio(grupo_combate, db)
-                    print(f"Te enfrentas a {len(combate.enemigos)} enemigos.")
-                    for enemigo in combate.enemigos:
-                        enemigo.atributos()
-                        print("=" * 40)
+                    combate = Combate(grupo_combate, enemigos_ronda, db)
 
                     while combate.estado == "en_curso":
-                        for personaje in grupo_combate:
-                            if personaje.estavivo():
-                                turno_jugador(combate, personaje)
-                            if combate.estado != "en_curso":
-                                break
+                        personaje = elegir_personaje(grupo_combate)
+                        turno_jugador(combate, personaje)
                         if combate.estado == "en_curso":
-                            combate.turno_enemigos()
+                            combate.turno_enemigos(personaje)
 
                     if combate.estado == "victoria":
                         victorias += 1
