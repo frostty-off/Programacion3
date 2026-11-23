@@ -16,8 +16,9 @@ class Combate:
         self._actualizar_estado()
 
     @classmethod
-    def aleatorio(cls, personajes, db):
-        cantidad = random.choice((3, 6))
+    def aleatorio(cls, personajes, db, cantidad=None):
+        if cantidad is None:
+            cantidad = random.choice((3, 6))
         enemigos = db.cargar_enemigos(cantidad=cantidad)
         return cls(personajes, enemigos, db)
 
@@ -123,8 +124,14 @@ class Combate:
         self._actualizar_estado()
         return dano
 
-    def turno_enemigos(self):
+    def turno_enemigos(self, objetivo=None):
         self._asegurar_combate_activo()
+        if objetivo is not None:
+            if objetivo not in self.personajes:
+                raise ValueError("El objetivo debe pertenecer al equipo de personajes.")
+            if not objetivo.estavivo():
+                raise ValueError(f"{objetivo.nombre} ya no puede combatir.")
+
         for enemigo in self.enemigos:
             personajes_vivos = [
                 personaje for personaje in self.personajes if personaje.estavivo()
@@ -132,7 +139,9 @@ class Combate:
             if not personajes_vivos:
                 break
             if enemigo.estavivo():
-                objetivo = random.choice(personajes_vivos)
+                objetivo_enemigo = (
+                    objetivo if objetivo is not None else random.choice(personajes_vivos)
+                )
                 habilidades_disponibles = [
                     habilidad
                     for habilidad in enemigo.habilidades
@@ -143,7 +152,9 @@ class Combate:
                     and random.choice(("ataque", "habilidad")) == "habilidad"
                 ):
                     habilidad = random.choice(habilidades_disponibles)
-                    self.usar_habilidad(enemigo, habilidad, objetivo)
+                    self.usar_habilidad(enemigo, habilidad, objetivo_enemigo)
                 else:
-                    self.atacar(enemigo, objetivo)
+                    self.atacar(enemigo, objetivo_enemigo)
+                if objetivo is not None and not objetivo.estavivo():
+                    break
         return self.estado

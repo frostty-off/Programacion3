@@ -50,6 +50,11 @@ class Warrior(Personaje):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.gaunlets = gaunlets
         self.habilidades.append(Habilidades("Corte Feroz", "Fisico", 10, 2.0))
+        self.habilidades.extend([
+            Habilidades("Gancho Alto", "Fisico", 10, 4.5),
+            Habilidades("Puñetazo Meteorico", "Fisico", 25, 7.0),
+            Habilidades("Puño Flash", "Fisico", 5, 2.0),
+        ])
         
     def atributos(self):
         super().atributos()
@@ -84,6 +89,10 @@ class Paladin(Personaje):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.shield = shield
         self.habilidades.append(Habilidades("Luz sagrada", "Magico", 20, 1.7))
+        self.habilidades.extend([
+            Habilidades("Embestida Sacra", "Fisico", 15, 5.33),
+            Habilidades("Portazo Aturdidor", "Fisico", 10, 3.54),
+        ])
 
     def atributos(self):
         super().atributos()
@@ -101,6 +110,10 @@ class Rogue(Personaje):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.knive = knive
         self.habilidades.append(Habilidades("Ataque furtivo", "Fisico", 10, 2.2))
+        self.habilidades.extend([
+            Habilidades("Emboscada", "Fisico", 5, 4.5),
+            Habilidades("Jugada Sucia", "Fisico", 10, 5.0),
+        ])
 
     def atributos(self):
         super().atributos()
@@ -119,6 +132,11 @@ class Knight(Personaje):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.sword = sword
         self.habilidades.append(Habilidades("Cañon de bola", "Fisico", 10, 2.0))
+        self.habilidades.extend([
+            Habilidades("Corte Real", "Fisico", 15, 4.5),
+            Habilidades("Estocada", "Fisico", 5, 2.0),
+            Habilidades("Espadazo Final", "Fisico", 30, 8.0),
+        ])
 
     def atributos(self):
         super().atributos()

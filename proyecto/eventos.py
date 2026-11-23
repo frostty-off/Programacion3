@@ -56,36 +56,44 @@ class Bueno_Evento(Evento):
 class Combate_Trigger(Evento):
 
     def __init__(self, nombre, id):
-            super().__init__(nombre, id)
+        super().__init__(nombre, id)
 
     def combate_3(self):
         if self.generar_evento() == 3:
             self.cantidad_enemigos = 3
-            pass
-        else: return
+            return True
+        return False
 
     def combate_6(self):
         if self.generar_evento() == 4:
             self.cantidad_enemigos = 6
-            pass        
+            return True
+        return False
 
 #Generamos los eventos desfavorables
 
 class Malo_Evento(Evento):
 
     def __init__(self, nombre, id):
-            super().__init__(nombre, id)
+        super().__init__(nombre, id)
 
-    def trampa(self):
-        if self.generar_evento() == 3:
-            self.trampa = 0.24
-            pass
-        else: return
+    def trampa(self, personajes):
+        if self.generar_evento() == 5:
+            porcentaje_dano = 0.24
+            for personaje in self._personajes_como_lista(personajes):
+                personaje.vida = max(
+                    0,
+                    personaje.vida - round(personaje.vida * porcentaje_dano)
+                )
+            return True
+        return False
 
-    def anulacion_estamina(self):
-        if self.generar_evento() == 3:
-            Personaje.estamina = 0.0
-        else: return              
+    def anulacion_estamina(self, personajes):
+        if self.generar_evento() == 6:
+            for personaje in self._personajes_como_lista(personajes):
+                personaje.estamina = 0.0
+            return True
+        return False
 
 #evento1 = Evento("Regeneracion", 1)  
 #evento2 = Evento("Multi", 2)
