@@ -49,8 +49,7 @@ class Warrior(Personaje):
     def __init__(self, nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, gaunlets):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.gaunlets = gaunlets
-        #EJEMPLO!!!!
-        self.habilidades.append(Habilidades("Corte", "Fisico", 10, 2.0))
+        self.habilidades.append(Habilidades("Corte Feroz", "Fisico", 10, 2.0))
         
     def atributos(self):
         super().atributos()
@@ -67,6 +66,7 @@ class Magician(Personaje):
     def __init__(self, nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, wand):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.wand = wand
+        self.habilidades.append(Habilidades("Bola de fuego", "Magico", 15, 1.5))
 
     def atributos(self):
         super().atributos()
@@ -83,6 +83,7 @@ class Paladin(Personaje):
     def __init__(self, nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, shield):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.shield = shield
+        self.habilidades.append(Habilidades("Luz sagrada", "Magico", 20, 1.7))
 
     def atributos(self):
         super().atributos()
@@ -99,6 +100,7 @@ class Rogue(Personaje):
     def __init__(self, nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, knive):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.knive = knive
+        self.habilidades.append(Habilidades("Ataque furtivo", "Fisico", 10, 2.2))
 
     def atributos(self):
         super().atributos()
@@ -116,6 +118,7 @@ class Knight(Personaje):
     def __init__(self, nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, sword):
         super().__init__(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
         self.sword = sword
+        self.habilidades.append(Habilidades("Cañon de bola", "Fisico", 10, 2.0))
 
     def atributos(self):
         super().atributos()

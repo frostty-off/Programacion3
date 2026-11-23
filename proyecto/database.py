@@ -176,7 +176,6 @@ class database:
             ''', (personaje.nombre, hab.nombre, hab.tipo, hab.coste, hab.dmg_base))
 
         self.conn.commit()
-        print(f"{personaje.nombre} y sus habilidades fueron guardados con éxito")
 
     def cargar_personajes(self):
         self.cursor.execute('SELECT * FROM personajes')
@@ -193,13 +192,6 @@ class database:
             elif clase_tipo == "Rogue": p = Rogue(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, equipo_valor)
             elif clase_tipo == "Knight": p = Knight(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina, equipo_valor)
             else: p = Personaje(nombre, profesion, raza, fuerza, defensa, inteligencia, vida, estamina)
-
-            #buscar/adjuntar habilidades
-            self.cursor.execute('SELECT habilidad_nombre, tipo, coste, dmg_base FROM personaje_habilidades WHERE personaje_nombre = ?', (nombre,))
-            habs_filas = self.cursor.fetchall()
-            for h_nombre, h_tipo, h_coste, h_dmg in habs_filas:
-                habilidad_obj = Habilidades(h_nombre, h_tipo, h_coste, h_dmg)
-                p.habilidades.append(habilidad_obj)
 
             personajes.append(p)
             
